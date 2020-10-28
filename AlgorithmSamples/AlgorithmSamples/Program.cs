@@ -1,12 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using AlgorithmsLibrary;
+using Samples.Collection_Type_Comparisons;
 
 namespace Samples
 {
     public sealed class Program
     {
         private static void Main()
+        {
+            // Uncomment to run example code.
+
+            //DemoShuffle();
+            //ArrayVsMap.DemoAccess();
+        }
+
+        private static void DemoShuffle()
         {
             // TODO write actual unit tests for this
             // that prove the shuffle yields an even
