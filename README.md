@@ -1,11 +1,16 @@
 # Algorithm Exercises
 Contains examples of algorithms in C# with explanations on their runtime and storage efficiency. This repository holds the work completed for PROG-366 Algorithms at Columbia College Chicago in 2020.
-## Contents
-1. Simple algorithms with comments explaining their big O notation
-2. Explanations of different collection types
-3. Implementation of Algorithms (Library):
+## Contents (Links to other Readmes)
+1. [Explanation of Big-O notation with code examples](https://github.com/JSchoppe/AlgorithmExercises/tree/master/AlgorithmSamples/AlgorithmSamples/Big%20O%20Examples)
+2. [Comparisons of different collection types in C#](https://github.com/JSchoppe/AlgorithmExercises/tree/master/AlgorithmSamples/AlgorithmSamples/Collection%20Type%20Comparisons)
+3. [Library Implementation of Algorithms](https://github.com/JSchoppe/AlgorithmExercises/tree/master/AlgorithmSamples/AlgorithmsLibrary)
     - Fisher Yates Shuffle
+
 ## Course Content Overview
+<details>
+<summary>View week-to-week coursework</summary>
+<br>
+    
 ### Week 1
 We discussed the basics of big-O, big-θ, and big-Ω. Examples were shown of basic collection insertion and retrieval algorithms with an overview of recursion vs looping. We discussed what it meant to reduce an algorithms into simpler problems and how this effects the big notations.
 ### Week 2
@@ -22,5 +27,10 @@ Discussed the tradeoffs of each collection type and scenarios where they are use
 ### Week 7
 Discussed the implementation of Hash Table collections and the C# type-safe variant Dictionary. Went over issues with collision
 and how a Hash Table can be fine tuned using parameters to trade off storage for speed.
+### Week 8
+Reviewed previous topics, improved and peer reviewed github repos.
+
+</details>
+
 ## License
 Licensed under MIT, although I have no idea why you would want to yoink this code.
