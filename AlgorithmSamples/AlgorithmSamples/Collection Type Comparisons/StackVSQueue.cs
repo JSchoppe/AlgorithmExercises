@@ -40,9 +40,11 @@ namespace Samples.Collection_Type_Comparisons
             // of the stack is to facilitate the command pattern. This
             // is common for implementing undo/redo buttons in programs.
             // User executes commands in a graphics editor:
-            ICommand drawCommand = new DrawCommandMock(); drawCommand.Do();
+            ICommand drawCommand = new DrawCommandMock();
+            drawCommand.Do();
             actionsStack.Push(drawCommand);
-            ICommand splineCommand = new SplineCommandMock(); splineCommand.Do();
+            ICommand splineCommand = new SplineCommandMock();
+            splineCommand.Do();
             actionsStack.Push(splineCommand);
             // User decides they want to undo the last spline they placed.
             // We simply undo the last command and pop it off the stack.

@@ -25,26 +25,5 @@ namespace AlgorithmsLibrary
             for (int i = collection.Count - 1; i > 0; i--)
                 collection.Swap(i, PRNG.Next(i + 1));
         }
-
-        // TODO Swap should be elevated in the library.
-
-        /// <summary>
-        /// Swaps items in a collection.
-        /// </summary>
-        /// <param name="collection">The collection to swap items in.</param>
-        /// <param name="indexA">Index of the first item to swap.</param>
-        /// <param name="indexB">Index of the second item to swap.</param>
-        public static void Swap<T>(this IList<T> collection, int indexA, int indexB)
-        {
-            // Improvement?: If the requested swap is redundant time may be
-            // saved if the collection accessor is a time consuming operation.
-
-            if (indexA != indexB)
-            {
-                T holder = collection[indexA];
-                collection[indexA] = collection[indexB];
-                collection[indexB] = holder;
-            }
-        }
     }
 }

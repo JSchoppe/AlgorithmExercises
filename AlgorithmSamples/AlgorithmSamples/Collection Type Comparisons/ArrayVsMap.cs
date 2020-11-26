@@ -36,7 +36,7 @@ namespace Samples.Collection_Type_Comparisons
             // add or delete from it. List are also best for simple
             // enumeration. They should not be used if you have
             // to access specific elements very often.
-            namesList.Add("david");
+            namesList.Add("david@gmail.com");
             // You might use a list to store recipients of a newsletter.
             foreach (string email in namesList)
                 SendEmailMock(email, "buy buy buy!");
