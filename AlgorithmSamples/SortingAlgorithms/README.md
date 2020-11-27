@@ -79,3 +79,107 @@ private static void BubbleSort<T>(ref IList<T> collection)
 }
 ```
 </details>
+<details>
+<summary>Insertion Sort</summary>
+
+## Insertion Sort
+Insertion sort improves on bubble sort slightly by ensuring each element is
+sorted as it steps through the array once. It does not need to run an additional
+loop to ensure everything is sorted. Insertion sort iterates through the collection
+moving each element back until it sees a lesser or equal element. Since this
+operation runs forwards through the array we can always be sure that the first comparison
+we make to a lesser or equal element means all preceding elements are also lesser or equal
+to the current one (this lets us avoid some redundant comparisons). In the worst case
+though insertion sort can still run in O(n<sup>2</sup>) time. The upside is that it is very fast
+on smaller collections compared to the more sophisticated sorting algorithms. On smaller
+collections it is much more likely to run closer to O(n) time.
+
+Here is the pseudocode from [Wikipedia](https://en.wikipedia.org/wiki/Insertion_sort):
+```
+i ← 1
+while i < length(A)
+    j ← i
+    while j > 0 and A[j-1] > A[j]
+        swap A[j] and A[j-1]
+        j ← j - 1
+    end while
+    i ← i + 1
+end while
+```
+
+### My Implementation
+
+```cs
+private static void InsertionSort<T>(ref IList<T> collection)
+    where T : IComparable
+{
+    // Step along the array.
+    for (int i = 1; i < collection.Count; i++)
+        // Look backwards at each prior adjacent pair.
+        for (int j = i; j > 0; j--)
+            // Fix order of the prior pair if neccasary.
+            if (collection[j].CompareTo(collection[j - 1]) < 0)
+                collection.Swap(j - 1, j);
+}
+```
+</details>
+<details>
+<summary>Selection Sort</summary>
+
+## Selection Sort
+Selection sort is similar to insertion sort but is notably less efficient in the average case.
+The average case typically runs around the worst case O(n<sup>2</sup>) time. Selection sort works
+by looking at a shrinking subsection of the array and finding the minimum value in said section. Once
+it checks every element and finds the minimum it pushes it to the front of the section and shrinks
+the section by one element. The upside to selection sort is that it requires the minimum number of swaps
+against the collection. Unlike insertion sort that has to "bubble" items forwards by performing several
+swaps.
+
+Here is the pseudocode from [Wikipedia](https://en.wikipedia.org/wiki/Selection_sort):
+```
+arr[] = 64 25 12 22 11
+
+// Find the minimum element in arr[0...4]
+// and place it at beginning
+11 25 12 22 64
+
+// Find the minimum element in arr[1...4]
+// and place it at beginning of arr[1...4]
+11 12 25 22 64
+
+// Find the minimum element in arr[2...4]
+// and place it at beginning of arr[2...4]
+11 12 22 25 64
+
+// Find the minimum element in arr[3...4]
+// and place it at beginning of arr[3...4]
+11 12 22 25 64 
+```
+
+### My Implementation
+
+```cs
+private static void SelectionSort<T>(ref IList<T> collection)
+    where T : IComparable
+{
+    // Store the current minimum value index
+    // in the partition we are inspecting.
+    int minIndex;
+    // Step through the array and select the
+    // minimum value in the shrinking partition.
+    for (int i = 0; i < collection.Count - 1; i++)
+    {
+        minIndex = i;
+        // Find the smallest remaining value.
+        for (int j = i + 1; j < collection.Count; j++)
+        {
+            if (collection[j].CompareTo(collection[minIndex]) < 0)
+                minIndex = j;
+        }
+        // Move the smallest value to the end
+        // of the current partition.
+        collection.Swap(i, minIndex);
+    }
+}
+```
+</details>
