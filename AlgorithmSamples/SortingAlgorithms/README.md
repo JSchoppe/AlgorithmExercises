@@ -29,7 +29,7 @@ Bubble sort is the most obvious solution to sorting a collection. It simply
 iterates over the array repeatedly swapping adjacent elements until the array
 is sorted. It is easy to see why this solution is so slow; it constantly makes
 repetitive comparisons it already made in previous iterations. Because of this
-bubble sort commonly runs at its O(n<sup>2</sup>) time.
+bubble sort commonly runs at its O(*n*<sup>2</sup>) time.
 
 Here is the pseudocode from [Wikipedia](https://en.wikipedia.org/wiki/Bubble_sort):
 ```
@@ -90,9 +90,9 @@ moving each element back until it sees a lesser or equal element. Since this
 operation runs forwards through the array we can always be sure that the first comparison
 we make to a lesser or equal element means all preceding elements are also lesser or equal
 to the current one (this lets us avoid some redundant comparisons). In the worst case
-though insertion sort can still run in O(n<sup>2</sup>) time. The upside is that it is very fast
+though insertion sort can still run in O(*n*<sup>2</sup>) time. The upside is that it is very fast
 on smaller collections compared to the more sophisticated sorting algorithms. On smaller
-collections it is much more likely to run closer to O(n) time.
+collections it is much more likely to run closer to O(*n*) time.
 
 Here is the pseudocode from [Wikipedia](https://en.wikipedia.org/wiki/Insertion_sort):
 ```
@@ -128,7 +128,7 @@ private static void InsertionSort<T>(ref IList<T> collection)
 
 ## Selection Sort
 Selection sort is similar to insertion sort but is notably less efficient in the average case.
-The average case typically runs around the worst case O(n<sup>2</sup>) time. Selection sort works
+The average case typically runs around the worst case O(*n*<sup>2</sup>) time. Selection sort works
 by looking at a shrinking subsection of the array and finding the minimum value in said section. Once
 it checks every element and finds the minimum it pushes it to the front of the section and shrinks
 the section by one element. The upside to selection sort is that it requires the minimum number of swaps
@@ -179,6 +179,130 @@ private static void SelectionSort<T>(ref IList<T> collection)
         // Move the smallest value to the end
         // of the current partition.
         collection.Swap(i, minIndex);
+    }
+}
+```
+</details>
+<details>
+<summary>Heap Sort</summary>
+
+## Heap Sort
+Heap sort is the first advanced algorithm listed here that runs in O(*n*log*n*) time.
+Heap sort does this by taking advantage of the notion of a max-heap to minimize the
+number of required comparisons to sort the collection. A max-heap is defined by a tree
+structure with a root where each node has two children of lesser or equal value. Nodes
+at the bottom of the tree may be empty due to non-power-of-two sized collections. Once
+this tree has been constructed the root element can be pushed to the back of the collection
+and the remaining nodes can be reconsidered. Aside from appointing a new root node, large
+branches of the tree can be left untouched because we can assume if the parent node did not
+change then the remaining children in that branch are still in order from the prior iteration.
+This is how heap sort saves so much time on larger collections.
+
+Here is the pseudocode from [Wikipedia](https://en.wikipedia.org/wiki/Heapsort),
+it is broken into multiple chunks since the algorithm is recursive:
+```
+procedure heapsort(a, count) is
+    input: an unordered array a of length count
+ 
+    (Build the heap in array a so that largest value is at the root)
+    heapify(a, count)
+
+    (The following loop maintains the invariants that a[0:end] is a heap and every element
+     beyond end is greater than everything before it (so a[end:count] is in sorted order))
+    end ← count - 1
+    while end > 0 do
+        (a[0] is the root and largest value. The swap moves it in front of the sorted elements.)
+        swap(a[end], a[0])
+        (the heap size is reduced by one)
+        end ← end - 1
+        (the swap ruined the heap property, so restore it)
+        siftDown(a, 0, end)
+```
+```
+(Put elements of 'a' in heap order, in-place)
+procedure heapify(a, count) is
+    (start is assigned the index in 'a' of the last parent node)
+    (the last element in a 0-based array is at index count-1; find the parent of that element)
+    start ← iParent(count-1)
+    
+    while start ≥ 0 do
+        (sift down the node at index 'start' to the proper place such that all nodes below
+         the start index are in heap order)
+        siftDown(a, start, count - 1)
+        (go to the next parent node)
+        start ← start - 1
+    (after sifting down the root all nodes/elements are in heap order)
+
+(Repair the heap whose root element is at index 'start', assuming the heaps rooted at its children are valid)
+procedure siftDown(a, start, end) is
+    root ← start
+
+    while iLeftChild(root) ≤ end do    (While the root has at least one child)
+        child ← iLeftChild(root)   (Left child of root)
+        swap ← root                (Keeps track of child to swap with)
+
+        if a[swap] < a[child] then
+            swap ← child
+        (If there is a right child and that child is greater)
+        if child+1 ≤ end and a[swap] < a[child+1] then
+            swap ← child + 1
+        if swap = root then
+            (The root holds the largest element. Since we assume the heaps rooted at the
+             children are valid, this means that we are done.)
+            return
+        else
+            swap(a[root], a[swap])
+            root ← swap            (repeat to continue sifting down the child now)
+```
+
+### My Implementation
+
+```cs
+private static void HeapSort<T>(ref IList<T> collection)
+    where T : IComparable
+{
+    int size = collection.Count;
+    // Step backwards to create the initial max-heap
+    // by sorting out parent-child-child groups.
+    for (int i = size / 2 - 1; i >= 0; i--)
+        HeapifyRecursive(size, i, ref collection);
+    // One by one extract an element from the heap.
+    for (int i = size - 1; i > 0; i--)
+    {
+        // Move current root to end.
+        collection.Swap(0, i);
+        // Max heapify the entire heap by
+        // starting from the root.
+        HeapifyRecursive(i, 0, ref collection);
+    }
+}
+
+private static void HeapifyRecursive<T>(int size, int rootIndex, ref IList<T> collection)
+        where T : IComparable
+{
+    // Get the indices of the two children
+    // by the definition of a heap.
+    int leftIndex = 2 * rootIndex + 1;
+    int rightIndex = 2 * rootIndex + 2;
+    // Find the largest value between the root
+    // and its two children.
+    int largestIndex = rootIndex;
+    // Ensure that children are within the collection
+    // and not truncated branches on the tree end.
+    if (leftIndex < size)
+        if (collection[leftIndex].CompareTo(collection[largestIndex]) > 0)
+            largestIndex = leftIndex;
+    if (rightIndex < size)
+        if (collection[rightIndex].CompareTo(collection[largestIndex]) > 0)
+            largestIndex = rightIndex;
+    // Fix a misordered heap relationship if necassary.
+    if (largestIndex != rootIndex)
+    {
+        // Ensure that the parent node is greater
+        // than or equal to both its children.
+        collection.Swap(rootIndex, largestIndex);
+        // Fix misordered heaps that this may have caused.
+        HeapifyRecursive(size, largestIndex, ref collection);
     }
 }
 ```
