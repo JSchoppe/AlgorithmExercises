@@ -307,3 +307,224 @@ private static void HeapifyRecursive<T>(int size, int rootIndex, ref IList<T> co
 }
 ```
 </details>
+<details>
+<summary>Quick Sort</summary>
+
+## Quick Sort
+Quick sort is in many cases considered to be the fastest sorting algorithm.
+The key performance factor of quick sort is the choice of a partition element
+that subdivides the collection into two halfs to sort (recursively). Given good
+partition elements, that are near the median value in their section, the algorithm
+will run in O(*n*log*n*) time. Quick sort works by choosing an element as the partition
+and sorting everything to the back and front of it. After this it considers each new half
+of the collection and does the same thing. This constant narrowing of comparisons scope
+is what makes quick sort fast, but it is strongly dependent on good partition elements.
+
+Here is the pseudocode from [Wikipedia](https://en.wikipedia.org/wiki/Quicksort),
+it is broken into multiple chunks since the algorithm is recursive:
+```
+algorithm quicksort(A, lo, hi) is
+    if lo < hi then
+        p := partition(A, lo, hi)
+        quicksort(A, lo, p)
+        quicksort(A, p + 1, hi)
+
+algorithm partition(A, lo, hi) is
+    pivot := A[⌊(hi + lo) / 2⌋]
+    i := lo - 1
+    j := hi + 1
+    loop forever
+        do
+            i := i + 1
+        while A[i] < pivot
+        do
+            j := j - 1
+        while A[j] > pivot
+        if i ≥ j then
+            return j
+        swap A[i] with A[j]
+```
+
+### My Implementation
+
+```cs
+private static void QuickSort<T>(ref IList<T> collection)
+    where T : IComparable
+{
+    QuickSortRecursive(ref collection, 0, collection.Count - 1);
+}
+private static void QuickSortRecursive<T>(ref IList<T> collection, int startIndex, int endIndex)
+    where T : IComparable
+{
+    // Is this subdivision of size > 1?
+    // If not this recursion loop has completed.
+    if (startIndex < endIndex)
+    {
+        // Quick sort around the partition for this set.
+        int partitionIndex = QuickSortPartition(ref collection, startIndex, endIndex);
+        // Recursively sort elements before the
+        // partition and after the partition.
+        QuickSortRecursive(ref collection, startIndex, partitionIndex - 1);
+        QuickSortRecursive(ref collection, partitionIndex + 1, endIndex);
+    }
+}
+private static int QuickSortPartition<T>(ref IList<T> collection, int startIndex, int endIndex)
+    where T : IComparable
+{
+    // Grab the rightmost element as the pivot.
+    T pivotValue = collection[endIndex];
+    // Keep track of where the partition will
+    // be inserted (elements to the left).
+    int pivotIndex = startIndex - 1;
+    // Step through this section and divide the values
+    // around the partition.
+    for (int i = startIndex; i < endIndex; i++)
+    {
+        // Is this value smaller than the pivot?
+        if (collection[i].CompareTo(pivotValue) < 0)
+        {
+            // Push the pivot insertion point forward.
+            pivotIndex++;
+            // Pull the element behind the pivot.
+            collection.Swap(pivotIndex, i);
+        }
+    }
+    // Ensure the pivot is placed after all smaller elements.
+    pivotIndex++;
+    // Insert the properly sorted partition element.
+    collection.Swap(pivotIndex, endIndex);
+    return pivotIndex;
+}
+```
+</details>
+<details>
+<summary>Merge Sort</summary>
+
+## Merge Sort
+Merge sort is a strong competitor to quick sort. The key difference is that
+instead of relying on choosing a good partition element, merge sort gains
+its performance from requiring additional memory to allocate temporary arrays
+for the merging process. Similar to quick sort and heap sort, this algorithm runs
+at a best case of O(*n*log*n*) time. Merge sort works by repeatedly cutting the collection
+in half (recursively) until the recursion reaches the most granular comparison of element to element.
+Then the recursion unwinds and at each level the two children are merged. When merging
+additional memory is allocated for the children. Since each child has already been sorted we
+can merge them together by repeatedly pulling the lesser element until both children are exhausted.
+This repeats until the entire recursion call-stack is exhausted.
+
+Here is the pseudocode from [Wikipedia](https://en.wikipedia.org/wiki/Merge_sort),
+it is broken into multiple chunks since the algorithm is recursive:
+```
+function merge_sort(list m) is
+    // Base case. A list of zero or one elements is sorted, by definition.
+    if length of m ≤ 1 then
+        return m
+
+    // Recursive case. First, divide the list into equal-sized sublists
+    // consisting of the first half and second half of the list.
+    // This assumes lists start at index 0.
+    var left := empty list
+    var right := empty list
+    for each x with index i in m do
+        if i < (length of m)/2 then
+            add x to left
+        else
+            add x to right
+
+    // Recursively sort both sublists.
+    left := merge_sort(left)
+    right := merge_sort(right)
+
+    // Then merge the now-sorted sublists.
+    return merge(left, right)
+```
+```
+function merge(left, right) is
+    var result := empty list
+
+    while left is not empty and right is not empty do
+        if first(left) ≤ first(right) then
+            append first(left) to result
+            left := rest(left)
+        else
+            append first(right) to result
+            right := rest(right)
+
+    // Either left or right may have elements left; consume them.
+    // (Only one of the following loops will actually be entered.)
+    while left is not empty do
+        append first(left) to result
+        left := rest(left)
+    while right is not empty do
+        append first(right) to result
+        right := rest(right)
+    return result
+```
+
+### My Implementation
+
+```cs
+private static void MergeSort<T>(ref IList<T> collection)
+    where T : IComparable
+{
+    MergeSortRecursive(ref collection, 0, collection.Count - 1);
+}
+private static void MergeSortRecursive<T>(ref IList<T> collection, int startIndex, int endIndex)
+    where T : IComparable
+{
+    // Is this subdivision of size > 1?
+    // If not this recursion loop has completed.
+    if (startIndex < endIndex)
+    {
+        int middle = (startIndex + endIndex) / 2;
+        // Continue splitting the collection in half.
+        MergeSortRecursive(ref collection, startIndex, middle);
+        MergeSortRecursive(ref collection, middle + 1, endIndex);
+        // Combine the individual chunks at each level.
+        Merge(ref collection, startIndex, middle, endIndex);
+    }
+}
+private static void Merge<T>(ref IList<T> collection, int start, int middle, int end)
+    where T : IComparable
+{
+    // Create arrays to temporarily store
+    // the values from the merge halfs.
+    T[] left = collection.Slice(start, middle);
+    T[] right = collection.Slice(middle + 1, end);
+    // Keep track of location in each sorted
+    // half as we combine them together.
+    int leftI = 0, rightI = 0;
+    // Step through the section of the array
+    // to assemble, pulling values from either
+    // of the halfs.
+    int i = start;
+    while (leftI < left.Length && rightI < right.Length)
+    {
+        // Insert the next least value into the array.
+        if (left[leftI].CompareTo(right[rightI]) < 0)
+        {
+            collection[i] = left[leftI];
+            leftI++;
+        }
+        else
+        {
+            collection[i] = right[rightI];
+            rightI++;
+        }
+        i++;
+    }
+    // Pull any remaining elements from left
+    // or right halfs (in the case of uneven halfs).
+    while (leftI < left.Length)
+    {
+        collection[i] = left[leftI];
+        leftI++; i++;
+    }
+    while (rightI < right.Length)
+    {
+        collection[i] = right[rightI];
+        rightI++; i++;
+    }
+}
+```
+</details>
