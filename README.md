@@ -12,6 +12,10 @@ Contains examples of algorithms in C# with explanations on their runtime and sto
     - Heap Sort
     - Quick Sort
     - Merge Sort
+5. [Generic Searching Algorithm Implementation](https://github.com/JSchoppe/CommonAlgorithmsCSharp/tree/master/AlgorithmSamples/SearchingAlgorithms)
+    - Linear Search
+    - Binary Search
+    - Interpolation Search
 
 ## License
 Licensed under MIT, feel free to yoink this code.
