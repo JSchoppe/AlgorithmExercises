@@ -149,7 +149,7 @@ namespace Samples.Collection_Type_Comparisons
                 // Waste some time.
                 double x = 4f;
                 for (int i = 0; i < 1000; i++)
-                    x = x * Math.Sin(x);
+                    x *= Math.Sin(x);
             }
         }
         private static void SendEmailMock(string recipient, string message)
